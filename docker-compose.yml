@@ -13,3 +13,27 @@ services:
       - db_data:/var/lib/postgresql/data
 volumes:
   db_data:
+
+
+  
+  #image: postgres:15 : Utilise l’image officielle PostgreSQL version 15.
+
+#container_name: marketplace-db : Nom du conteneur dans Docker (plus facile à identifier qu’un nom aléatoire).
+
+#environment : Variables d’environnement pour configurer la base de données à la création du conteneur :
+
+#POSTGRES_USER : Nom d’utilisateur
+
+#POSTGRES_PASSWORD : Mot de passe
+
+#POSTGRES_DB : Nom de la base de données par défaut
+
+#ports : "5432:5432"
+
+#: 5432 sur l’hôte → 5432 sur le conteneur (port standard PostgreSQL)
+
+#Cela permet de se connecter à la DB depuis l’extérieur du conteneur.
+
+#volumes
+
+#db_data:/var/lib/postgresql/data → Persiste les données de PostgreSQL même si le conteneur est supprimé.
