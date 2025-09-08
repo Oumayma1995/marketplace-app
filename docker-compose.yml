@@ -1,5 +1,7 @@
 version: "3.9"
+
 services:
+  # ======== PostgreSQL ========
   db:
     image: postgres:15
     container_name: marketplace-db
@@ -11,8 +13,35 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  # ======== Backend Spring Boot ========
+  backend:
+    build: ./backend  # chemin vers ton projet Spring Boot
+    container_name: marketplace-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/marketplace
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+
+  # ======== Frontend Angular ========
+  frontend:
+    build: ./frontend/MarketplaceFrontEnd  # chemin vers ton projet Angular
+    container_name: marketplace-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    command: >
+      sh -c "npm install && npm start"
+
 volumes:
   db_data:
+
 
 
   
@@ -37,3 +66,54 @@ volumes:
 #volumes
 
 #db_data:/var/lib/postgresql/data → Persiste les données de PostgreSQL même si le conteneur est supprimé.
+
+
+############################### commandes utiles #################################################
+
+#Lancer PostgreSQL :
+
+#docker-compose up -d
+
+#Vérifier les logs :
+
+#docker-compose logs -f db
+
+#Arrêter et supprimer le conteneur :
+
+#docker-compose down
+
+#Supprimer le volume pour tout réinitialiser :
+
+#docker-compose down -v
+
+############################### commandes utiles #################################################
+
+### explication ###
+
+#PostgreSQL (db)
+
+#Persistance avec db_data
+
+#Port exposé pour tests et connexion depuis l’extérieur
+
+#Variables pour créer utilisateur et base automatiquement
+
+#Spring Boot (backend)
+
+#build: ./backend → ton projet Spring Boot doit être dans le dossier backend
+
+#Variables d’environnement pour la connexion à PostgreSQL
+
+#depends_on: - db → backend attend que la DB soit démarrée
+
+#Angular (frontend)
+
+#build: ./frontend → ton projet Angular dans le dossier frontend
+
+#Commande npm install && npm start pour lancer l’application
+
+#depends_on: - backend → démarrage après le backend (utile si tu fais des appels API dès le lancement)
+
+#Volumes
+
+#db_data → persistance des données PostgreSQL
