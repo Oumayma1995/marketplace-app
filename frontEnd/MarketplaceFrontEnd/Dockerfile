@@ -6,17 +6,16 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installer les dépendances
-RUN npm install -g npm@11
+RUN npm ci
 
 # Copier le reste des fichiers
 COPY . .
 
 # Build Angular
-RUN npm run build --prod
+RUN npm run build
 
 # Stage 2: serveur Nginx
 FROM nginx:alpine
-COPY --from=build /app/dist/* /usr/share/nginx/html
+COPY --from=build /app/dist/marketplace-front-end /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
-
